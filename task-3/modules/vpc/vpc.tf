@@ -7,22 +7,17 @@ resource "google_compute_network" "safle" {
 
 resource "google_compute_subnetwork" "private_subnet1" {
   name          = "private-subnet-1"
-  ip_cidr_range = "10.0.1.0/24"
+  ip_cidr_range = "10.0.2.0/24"
   region        = var.region
   network       = google_compute_network.safle.id
   private_ip_google_access = true
 }
 
-resource "google_compute_firewall" "allow_ssh" {
-  name    = "allow-ssh"
-  network = google_compute_network.safle.name
-
-  allow {
-    protocol = "tcp"
-    ports    = ["22"]
-  }
-
-  source_ranges = ["0.0.0.0/0"] # Adjust as necessary for security
+resource "google_compute_subnetwork" "kubernetes" {
+  name          = "kubernetes-subnet"
+  ip_cidr_range = "10.0.1.0/24"
+  region        = var.region
+  network       = google_compute_network.safle.id
 }
 
 resource "google_compute_global_address" "private_ip_block" {
