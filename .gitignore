@@ -4,3 +4,4 @@ locals.tf
 *.terraform*
 terraform.*
 */node_modules/
+*.env
