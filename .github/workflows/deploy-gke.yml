@@ -10,7 +10,7 @@ env:
   PROJECT_NUMBER: 578388368279
 
   CLUSTER: safle
-  CLUSTER_ZONE: us-east1-b
+  CLUSTER_ZONE: us-east1
 
   REPOSITORY: safle
   REPOSITORY_REGION: us-east1
