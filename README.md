@@ -187,7 +187,7 @@ NOTE :- A load Balancer was not created using Terraform , but provisioned via ma
                 - Update the image tag value with latest docker image tag
                 - Apply the manifest file
             ![JOBS](screenshots/deploy.png)
-        
+            ![PODS](screenshots/pods.png)
 
    
 ## Task 6 Security Best Practices 
