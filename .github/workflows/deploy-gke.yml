@@ -118,10 +118,11 @@ jobs:
       with:
         cluster_name: ${{ env.CLUSTER }}
         location: ${{ env.CLUSTER_ZONE }}
-
+    - name: Image tag as env
+      run: 
     - name: Lock image version in deployment.yaml
       run: |
-        echo "IMAGE_TAG=${{ env.REPOSITORY_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }}:$GITHUB_SHA"
+        echo "IMAGE_TAG=${{ env.REPOSITORY_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }}:$GITHUB_SHA" >> $GITHUB_ENV
         sed -i 's|SAFLE_IMAGE|${{ env.IMAGE_TAG }}|g' "./task-1&2&4/deployment.yaml"
         cat "./task-1&2&4/deployment.yaml"
 
