@@ -163,6 +163,8 @@ NOTE :- I have also created a private artifact repository in task 4 , but for th
 - Install Logstash
     - helm install logstash elastic/logstash
 
+![ELK](elk.png)
+
 This setup could not be completed due to elasticsearch pods having excessive memory requirements , thus moving to GCP offering of logging and debugging Solution .
 
 ### Logs Explorer by GCP Monitoring 
