@@ -10,7 +10,7 @@ spec:
     name: http
   selector:
     app: safle
-  type: NodePort
+  type: LoadBalancer
 
 ---
 apiVersion: networking.k8s.io/v1
@@ -49,3 +49,22 @@ spec:
             memory: 1024Mi
           requests:
             memory: 256Mi
+---
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: safle
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: safle
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 50
