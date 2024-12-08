@@ -26,8 +26,7 @@ NOTE :- I have also created a private artifact repository in task 4 , but for th
 - docker push image-name:image-tag
 - docker-compose up
 
-## Task 3 Infrastructure as Code (IaC) with Terraform
-## Task 5 High Availability and Load Balancing
+## Task 3 & 5 Infrastructure as Code (IaC) with Terraform & High Availability and Load Balancing
 ### Description
 - I have grouped task 3 & 5 where I have deployed an application in GKE , and added a Load Balancer on top of the application . All the Infra is created using terraform modules , No hardcoded values , I have used locals.tf to make sure no sensitive values are exposed . Also attached a sample locals.tf for reference .
 - Infrastructure created using Terraform:- 
@@ -53,7 +52,7 @@ NOTE :- I have also created a private artifact repository in task 4 , but for th
 - Access to GCP
 
 ### Steps to provision infra
-- cd task-3&5&7&8
+- cd task-3&5
 - Run command " terrform init " 
 - Run command " terraform plan "
 - Run command " terraform apply "
