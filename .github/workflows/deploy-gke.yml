@@ -6,8 +6,8 @@ on:
       - main
 
 env:
-  PROJECT_ID: safle-443815
-  PROJECT_NUMBER: 578388368279
+  PROJECT_ID: ${{ secrets.PROJECT_ID }}
+  PROJECT_NUMBER: ${{ secrets.PROJECT_NUMBER }}
 
   CLUSTER: safle
   CLUSTER_ZONE: us-east1
@@ -54,5 +54,5 @@ jobs:
     # Deploy to GKE
     #
     - name: Deploy to GKE
-      run: kubectl apply -f task1&2&4/deployment.yaml
+      run: kubectl apply -f ./task1&2&4/deployment.yaml
     
