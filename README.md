@@ -1,4 +1,13 @@
 # SAFLE
+
+## Deliverables
+    - ✅Terraform configuration files for infrastructure provisioning.
+    - ✅Dockerfile and docker-compose.yml for containerization
+    - ✅CI/CD pipeline configuration (GitHub Actions, Jenkins, or similar)
+    - ✅Documentation (README) explaining the setup, deployment, and monitoring.
+    - ✅Link to the running application (if deployed on a public cloud) or steps to access it locally.
+
+
 ## Task 1  Node.js Application Setup
 ### Description
 I have used a simple nodejs application and added basic unit test for atleast two end points (used jest)
@@ -57,14 +66,21 @@ NOTE :- I have also created a private artifact repository in task 4 , but for th
 - Run command " terraform apply "
 - Give input " yes " after running  terraform apply
 
+![VPC](screenshots/vpc_subnets.png)
 
-## Task 7 & 8  Monitoring and Alerts & Logging and Debugging
+![MYSQL](screenshots/mysql.png)
 
+![GKE](screenshots/gke.png)
+
+![ARTIFACT](screenshots/artifacts.png)
+
+
+## Task 7 Monitoring and Alerts 
+### Description
 - To deploy monitoring stack and logging stack I have used Helm and community available charts , the settings can further be configured by using a custom values.yaml for each chart we use .
 
 - For monitoring I have gone with widely used stack of Prometheus and Grafana , other options included google managed prometheus , or google default monitoruing 
 
-- For logging and debugging I have used ELK stack , other options included EFK , loki with grafana
 
 ### Pre-requisites
 - Helm
@@ -80,10 +96,13 @@ NOTE :- I have also created a private artifact repository in task 4 , but for th
 - Install Prometheus
     - helm install prometheus prometheus-community/prometheus
 - Verify all the pods are up
+![PROM-PODS](screenshots/prom-pods.png)
 - Port forward the prometheus server to check metrics
     - kubectl port-forward service/prometheus-server 8080:9090
 - Open browser and search for localhost:8080 ( 8080 is not mandatory in last step , can use any available port)
 - Goto targets and verify the incoming data
+
+![PROMETHEUS](screenshots/prometheus.png)
 
 ### Steps to Install Grafana
 - Get Access to cluster by running :- 
@@ -95,6 +114,7 @@ NOTE :- I have also created a private artifact repository in task 4 , but for th
 - Install Grafana
     - helm install grafana grafana/grafana
 - Verify all the pods are up
+![PODS](screenshots/grafana-pods.png)
 - Port forward the grafana 
     - kubectl port-forward grafana-7f898f4699-jjlxp 3000:3000
 - Open browser and search for localhost:3000 ( 3000 is not mandatory in last step , can use any available port)
@@ -104,21 +124,48 @@ NOTE :- I have also created a private artifact repository in task 4 , but for th
     - username would be "admin"
 - Add Datasource
     - Goto Connections -> Data Sources -> Add data source
+![DS](screenshots/navigate-data-source.png)
     - Check for prometheus data source 
     - Add the endpoint :- "prometheus-server.default.svc.cluster.local"
     - Click on save and test
+![DS](screenshots/add-ds-prom.png)
 - Add dashboard
     - Get the Grafana Dashboard ID from the Grafana public Dashboard library ( https://grafana.com/grafana/dashboards/ )
     - Now go to the search dashboard, and search for Kubernetes
     - Choose Kubernetes cluster monitoring (via Prometheus)
     - Copy the ID to clipboard
     - Come back to grafana , click on dashboard , click on new and import ,paste the dashboard id and load , select the datasource we configured and click on import
+![DASHBOARD](screenshots/grafana-dashboard.png)
 
 ### Setting up Alert to Slack
 - Navigate to https://api.slack.com/apps
-- Click on create an app -> from scratch -> give it a name and choose the workspace 
-- Click on incoming webhooks and enable 
+- Click on create an app -> from scratch -> give it a name and choose the workspace
+![WORKSPACE](screenshots/alert-slack-app.png)
+- Click on incoming webhooks and enable
+![WEBHOOK](screenshots/enable-webhooks.png)
 - Add a new webhook to the workspace -> Select the channel and copy the webhook URL
 - Come back to Grafna -> Alerting and Contact points 
 - Select Integration -> Slack , and paste the Webhook URL
+![ALERT](screenshots/alert.png)
  
+## Task 8 Logging and Debugging
+### Description
+- For logging and debugging I have used ELK stack , other options included EFK , loki with grafana
+
+### ❌❌Setting up ELK 
+- Add Elastic Helm Charts Repository
+    - helm repo add elastic https://helm.elastic.co
+    - helm repo update
+- Install Elasticsearch
+    - helm install elasticsearch elastic/elasticsearch
+- Install Kibana
+    - helm install kibana elastic/kibana
+- Install Logstash
+    - helm install logstash elastic/logstash
+
+This setup could not be completed due to elasticsearch pods having excessive memory requirements , thus moving to GCP offering of logging and debugging Solution .
+
+### Logs Explorer by GCP Monitoring 
+- By Deafult GCP monitoring allows to explore and filter logs based on namespace , pod name , cluster , node and errors
+
+![GCP-LOGS](screenshots/GCP-logs.png)
