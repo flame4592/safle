@@ -63,7 +63,7 @@ I have used a simple nodejs application and added basic unit test for atleast tw
 - node
 
 ### Steps to produce
-- cd task-1&2
+- cd task-1&2&4
 - node index.js
 - open browser and redirect to http://localhost:3000/api/items
 - npm test
