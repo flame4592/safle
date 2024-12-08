@@ -57,6 +57,5 @@ jobs:
       run: |
         pwd
         ls
-        cd "./task1&2&4"
         kubectl apply -f "./task-1&2&4/deployment.yaml"
     
