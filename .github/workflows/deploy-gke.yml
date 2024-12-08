@@ -55,8 +55,8 @@ jobs:
     #
     - name: Deploy to GKE
       run: |
-      pwd
-      cd "./task1&2&4"
-      ls
-      kubectl apply -f "./task1&2&4/deployment.yaml"
+        pwd
+        cd "./task1&2&4"
+        ls
+        kubectl apply -f "./task1&2&4/deployment.yaml"
     
