@@ -52,7 +52,7 @@
 
     - Architecture :- 
 
-        ![ARCH](screenshots/arc\h.png)
+        ![ARCH](screenshots/arch.png)
 
 
 ## Task 1  Node.js Application Setup
