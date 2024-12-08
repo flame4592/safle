@@ -85,6 +85,7 @@ NOTE :- I have also created a private artifact repository in task 4 , but for th
     - Add GitHub Actions as a workload identity pool provider
         - gcloud iam workload-identity-pools providers create-oidc github-actions-oidc  --location="global"  --workload-identity-pool=github-actions --issuer-uri="https://token.actions.githubusercontent.com/"  --attribute-mapping="google.subject=assertion.sub" --attribute-condition="assertion.repository_owner=='flame4592'"
 ![IDP](screenshots/idp-pool-prov.png)
+    
     - Create a service account
         - $SERVICE_ACCOUNT = (gcloud iam service-accounts create github-actions-workflow --display-name "GitHub Actions workflow" --format "value(email)")
 
@@ -115,12 +116,25 @@ NOTE :- I have also created a private artifact repository in task 4 , but for th
                 --member="serviceAccount:578388368279-compute@developer.gserviceaccount.com" `
                 --role=roles/artifactregistry.reader
 
-
-
-
- The pipeline will include steps :- 
-    - Code Checkout 
-    - 
+    - Once all the permissions are in place we will create the pipeline
+        - The pipeline structure looks like 
+            - JOB 1 ( Code Quality Check ) :- 
+                - Code Checkout
+                - Code Analysis
+            - JOB 2 ( Build and push to Registry) :- 
+                - Code Checkout
+                - Unit test 
+                - Obtain access token to GCP
+                - Get Authenticated with Artifact Registry
+                - Create image tag
+                - Build Docker Image
+                - Push Docker Image
+            - JOB 3 ( Deploy to K8s ) :- 
+                - Obtain access token to GCP
+                - Get Authenticated with Artifact Registry\
+                - Get Authenticated with GKE
+                - Update the image tag value with latest docker image tag
+                - Apply the manifest file
 
 
 ## Task 7 Monitoring and Alerts 

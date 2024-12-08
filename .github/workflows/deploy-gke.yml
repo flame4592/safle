@@ -33,13 +33,9 @@ jobs:
       with:
           output: results.sarif
           format: sarif
-          # Adjust severity of non-security issues
           gh-code-scanning-compat: true
-          # Force 0 exit code to allow SARIF file generation
-          # This will hand over control about PR rejection to the GitHub side
           max-allowed-issues: 2147483647
       
-      # Upload the SARIF file generated in the previous step
     - name: Upload SARIF results file
       uses: github/codeql-action/upload-sarif@main
       with:
@@ -54,6 +50,21 @@ jobs:
       contents: read
 
     steps:
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+          node-version: 16  # Use the appropriate Node.js version for your project
+
+      # Install dependencies
+    - name: Install dependencies
+      run: npm install
+
+      # Run tests
+    - name: Run tests
+      run: |
+        cd  "./task-1&2&4" && npm test
+        
     - name: Checkout
       uses: actions/checkout@v3
 
@@ -70,11 +81,6 @@ jobs:
       run: |-
         echo ${{ steps.auth.outputs.access_token }} | docker login -u oauth2accesstoken --password-stdin https://${{ env.REPOSITORY_REGION }}-docker.pkg.dev
 
-    - name: Connect to GKE
-      uses: google-github-actions/get-gke-credentials@v2
-      with:
-        cluster_name: ${{ env.CLUSTER }}
-        location: ${{ env.CLUSTER_ZONE }}
 
     - name: Create image tag
       id: set-output
