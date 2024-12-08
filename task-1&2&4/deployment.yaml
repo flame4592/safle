@@ -41,7 +41,7 @@ spec:
     spec:
       containers:
       - name: safle
-        image: 4592adarsh/project-safle:latest
+        image: SAFLE_IMAGE
         ports:
           - containerPort: 3000
         resources:
