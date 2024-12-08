@@ -28,10 +28,8 @@ NOTE :- I have also created a private artifact repository in task 4 , but for th
 
 ## Task 3 Infrastructure as Code (IaC) with Terraform
 ## Task 5 High Availability and Load Balancing
-## Task 7 Monitoring and Alerts
-## Task 8 Logging and Debugging
 ### Description
-- I have grouped task 3 , 5 , 7 & 8 where I have deployed an application in GKE , and added a Load Balancer on top of the application . All the Infra is created using terraform modules , No hardcoded values , I have used locals.tf to make sure no sensitive values are exposed . Also attached a sample locals.tf for reference .
+- I have grouped task 3 & 5 where I have deployed an application in GKE , and added a Load Balancer on top of the application . All the Infra is created using terraform modules , No hardcoded values , I have used locals.tf to make sure no sensitive values are exposed . Also attached a sample locals.tf for reference .
 - Infrastructure created using Terraform:- 
     - A VPC
     - 3 Subnets
@@ -47,8 +45,7 @@ NOTE :- I have also created a private artifact repository in task 4 , but for th
     - A managed MYSQL database
 
 - To maintain high availability I have gone with kubernetes , while the other options like cloud run , or docker swarm were available , kubernetes allowed me to better orchestrate my application and also to deploy the monitoring ( task 7 ) and logging stack ( task 8 ) , I can reuse kubernetes to deploy them instead of provisioning new infra .
-
-- To deploy monitoring stack and logging stack I have used Helm and community available charts , the settings can further be configured by using a custom values.yaml for each chart we use . 
+ 
 
 ### Pre-requisites
 - Terraform 
@@ -61,3 +58,8 @@ NOTE :- I have also created a private artifact repository in task 4 , but for th
 - Run command " terraform plan "
 - Run command " terraform apply "
 - Give input " yes " after running  terraform apply
+
+
+## Task 7 & 8  Monitoring and Alerts & Logging and Debugging
+
+- To deploy monitoring stack and logging stack I have used Helm and community available charts , the settings can further be configured by using a custom values.yaml for each chart we use .
