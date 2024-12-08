@@ -33,7 +33,7 @@ jobs:
     #
     - id: 'auth'
       name: 'Obtain access token by using workload identity federation'
-      uses: 'google-github-actions/auth@v0'
+      uses: 'google-github-actions/auth@v2.1.7'
       with:
         create_credentials_file: true
         token_format: access_token
@@ -45,7 +45,7 @@ jobs:
         echo ${{ steps.auth.outputs.access_token }} | docker login -u oauth2accesstoken --password-stdin https://${{ env.REPOSITORY_REGION }}-docker.pkg.dev
 
     - name: Connect to GKE
-      uses: google-github-actions/get-gke-credentials@v0
+      uses: google-github-actions/get-gke-credentials@v2.1.7
       with:
         cluster_name: ${{ env.CLUSTER }}
         location: ${{ env.CLUSTER_ZONE }}
