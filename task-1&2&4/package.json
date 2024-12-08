@@ -1,14 +1,14 @@
 {
   "description": "",
   "dependencies": {
-    "body-parser": "^1.20.3",
-    "express": "^4.21.2",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
     "supertest": "^7.0.0"
   },
   "scripts": {
-    "test": "jest"
-  },
-  "devDependencies": {
-    "jest": "^29.7.0"
+    "start": "node index.js",
+    "test": "node ./node_modules/jest/bin/jest.js"
   }
 }

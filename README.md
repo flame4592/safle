@@ -18,7 +18,7 @@ I have used a simple nodejs application and added basic unit test for atleast tw
 ### Steps to produce
 - cd task-1&2
 - node index.js
-- open browser and redirect to http://localhost:3000/api/todos
+- open browser and redirect to http://localhost:3000/api/items
 - npm test
 
 ## Task 2 Containerization with Docker
@@ -34,6 +34,7 @@ NOTE :- I have also created a private artifact repository in task 4 , but for th
 - docker build -t image-name:image-tag .
 - docker push image-name:image-tag
 - docker-compose up
+
 
 ## Task 3 & 5 Infrastructure as Code (IaC) with Terraform & High Availability and Load Balancing
 ### Description
@@ -73,6 +74,53 @@ NOTE :- I have also created a private artifact repository in task 4 , but for th
 ![GKE](screenshots/gke.png)
 
 ![ARTIFACT](screenshots/artifacts.png)
+
+## Task 4  CI/CD Pipeline
+### Description
+- In this task we will deploy our nodejs app in GKE using github actions
+- Before we can create our pipeline , we first need to create a connection between github and GKE
+    - Create a new workload identity pool
+        - gcloud iam workload-identity-pools create github-actions  --location="global"  --description="GitHub Actions tutorial" --display-name="GitHub Actions"
+![IDP](screenshots/workload-idp.png)
+    - Add GitHub Actions as a workload identity pool provider
+        - gcloud iam workload-identity-pools providers create-oidc github-actions-oidc  --location="global"  --workload-identity-pool=github-actions --issuer-uri="https://token.actions.githubusercontent.com/"  --attribute-mapping="google.subject=assertion.sub" --attribute-condition="assertion.repository_owner=='flame4592'"
+![IDP](screenshots/idp-pool-prov.png)
+    - Create a service account
+        - $SERVICE_ACCOUNT = (gcloud iam service-accounts create github-actions-workflow --display-name "GitHub Actions workflow" --format "value(email)")
+
+
+    - Grant the Artifact Registry writer role
+        - gcloud projects add-iam-policy-binding (gcloud config get-value core/project) `
+        --member "serviceAccount:$SERVICE_ACCOUNT" `
+        --role roles/artifactregistry.writer
+
+    - Grant the Google Kubernetes Engine developer role
+        - gcloud projects add-iam-policy-binding (gcloud config get-value core/project) `
+        --member "serviceAccount:$SERVICE_ACCOUNT" `
+        --role roles/container.developer
+
+
+    - Allow the GitHub Actions workflow to impersonate and use the service account
+        - Initialize an environment variable that contains the subject used by the GitHub Actions workflow.
+            - SUBJECT=repo:OWNER/dotnet-docs-samples:ref:refs/heads/main
+        - Grant the subject permission to impersonate the service account
+            - PROJECT_NUMBER=$(gcloud projects describe $(gcloud config get-value core/project) --format='value(projectNumber)')
+
+            gcloud iam service-accounts add-iam-policy-binding $SERVICE_ACCOUNT \
+            --role=roles/iam.workloadIdentityUser \
+            --member="principal://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/github-actions/subject/$SUBJECT"
+
+        - Allow the Compute Engine default service account to access the repository
+            - gcloud projects add-iam-policy-binding (gcloud config get-value core/project) `
+                --member="serviceAccount:578388368279-compute@developer.gserviceaccount.com" `
+                --role=roles/artifactregistry.reader
+
+
+
+
+ The pipeline will include steps :- 
+    - Code Checkout 
+    - 
 
 
 ## Task 7 Monitoring and Alerts 

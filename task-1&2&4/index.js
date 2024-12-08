@@ -1,28 +1,27 @@
-// index.js
 const express = require('express');
-const bodyParser = require('body-parser');
-
 const app = express();
-app.use(bodyParser.json());
 
-let todos = [];
+app.use(express.json());
 
-// GET endpoint to retrieve all todos
-app.get('/api/todos', (req, res) => {
-    res.json(todos);
+// Sample in-memory data
+let items = [{ id: 1, name: 'Item 1' }];
+
+// Routes
+app.get('/api/items', (req, res) => {
+    res.status(200).json(items);
 });
 
-// POST endpoint to create a new todo
-app.post('/api/todos', (req, res) => {
-    const newTodo = req.body;
-    todos.push(newTodo);
-    res.status(201).json(newTodo);
+app.post('/api/items', (req, res) => {
+    const newItem = { id: items.length + 1, name: req.body.name };
+    items.push(newItem);
+    res.status(201).json(newItem);
 });
 
-// Start the server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+// Export for testing
+module.exports = app;
 
-module.exports = app; // Exporting app for testing purposes
+// Start the server (only when not in test mode)
+if (require.main === module) {
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}

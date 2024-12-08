@@ -1,0 +1,58 @@
+name: Build and Deploy to GKE
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  PROJECT_ID: safle-443815
+  PROJECT_NUMBER: 578388368279
+
+  CLUSTER: safle
+  CLUSTER_ZONE: us-east1-b
+
+  REPOSITORY: safle
+  REPOSITORY_REGION: us-east1
+
+  IMAGE: safle
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    #
+    # Authenticate to Google Cloud using workload identity federation
+    #
+    - id: 'auth'
+      name: 'Obtain access token by using workload identity federation'
+      uses: 'google-github-actions/auth@v0'
+      with:
+        create_credentials_file: true
+        token_format: access_token
+        workload_identity_provider: projects/${{ env.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github-actions/providers/github-actions-oidc
+        service_account: github-actions-workflow@${{ env.PROJECT_ID }}.iam.gserviceaccount.com
+
+    - name: Connect to Artifact Registry
+      run: |-
+        echo ${{ steps.auth.outputs.access_token }} | docker login -u oauth2accesstoken --password-stdin https://${{ env.REPOSITORY_REGION }}-docker.pkg.dev
+
+    - name: Connect to GKE
+      uses: google-github-actions/get-gke-credentials@v0
+      with:
+        cluster_name: ${{ env.CLUSTER }}
+        location: ${{ env.CLUSTER_ZONE }}
+
+    #
+    # Deploy to GKE
+    #
+    - name: Deploy to GKE
+      run: kubectl apply -f applications/clouddemo/netcore/deployment.yaml
+    
