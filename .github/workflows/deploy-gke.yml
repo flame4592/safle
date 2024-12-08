@@ -48,7 +48,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     outputs:
-      image_tag: ${{ steps.set-output.outputs.image_tag }}
+      image_tag: ${{ steps.set-image-tag.outputs.image_tag }}
     permissions:
       id-token: write
       contents: read
@@ -121,7 +121,7 @@ jobs:
 
     - name: Lock image version in deployment.yaml
       run: |
-        sed -i 's|SAFLE_IMAGE|${{ needs.create-image-tag.outputs.image_tag }}|g' "./task-1&2&4/deployment.yaml"
+        sed -i 's|SAFLE_IMAGE|${{ needs.build.outputs.image_tag }}|g' "./task-1&2&4/deployment.yaml"
         cat "./task-1&2&4/deployment.yaml"
 
     - name: Deploy to GKE
