@@ -8,6 +8,53 @@
     - ✅Link to the running application (if deployed on a public cloud) or steps to access it locally.
 
 
+## Documentation
+### Description
+- ✅Detailed Summary of each task provided
+- How to trigger the CI/CD pipeline. 
+    - ✅Commit the code to main branch and pipeline will auto run 
+- Steps for setting up monitoring and alerts
+    - ✅ Detailed steps provided in Section Task 7 and Task 8
+
+- Explanation of design decisions, trade-offs, and challenges
+    - Design Decision 
+        - Task 3 :- 
+            -  Didnt create load balancer using terraform because in Section when deploying on kubernetes we can auto assign a load balancer using manifest files or helm charts and the auto scaling group get auto created aswell when in kubernetes .
+
+        - Task 4 :- 
+            - Went with Github actions , as my code was already on github , and creating a jenkins meant provisioning of another instance thus impacting the cost
+
+        - Task 5 :- 
+            - For High Availability of our application I went with kubernetes and 3 Availability Zones hence 3 nodes , Autocaling configured based on memory usage , if threshold crosses 50% , the pods will autoscale 
+
+            - Didnt choose Instances , because of COLD START effect , provisioning an Instance takes longer than just creating another pod 
+
+            - Didnt choose Cloud Run , because I wanted the flexibility to orchestrate my application , and have the option of community provided Monitoring and Logging Solution which are readily available in k8s
+
+        - Task 6 :- 
+            - Since we used k8s , there was no need for instance to be created for any of the task and no ssh key was used either 
+
+            - Couldnt set up HTTPS because dont have domain
+        
+        - Task 8 :- 
+            - I had to go with GCP provided logging solution at the end beacause ELK stack required high configuration nodes 
+
+    - Trade-Offs :- 
+        - Had to use GCP Looggin solution instead of ELK stack
+        - Tried to use Github code analysis instead of Sonarqube 
+        - Instead of using ingress controller used vanilla load balancer
+    
+    - Challenges :- 
+        - Time limit was less for this whole project and becuase of this :- 
+            - I often found myself going to AI chatbots instead of Documentation
+            - Could have setup sonarqube if had more time
+            - For github actions , could have used self hosted runner inside my k8s , but to compensate that i went with passwordless authentication between github actions and GCP
+
+    - Architecture :- 
+
+        ![ARCH](screenshots/arch.png)
+
+
 ## Task 1  Node.js Application Setup
 ### Description
 I have used a simple nodejs application and added basic unit test for atleast two end points (used jest)
@@ -23,14 +70,14 @@ I have used a simple nodejs application and added basic unit test for atleast tw
 
 ## Task 2 Containerization with Docker
 ### Description
-Used docker to containerize the Application , we created in task 1 and pushed to public dockerHub, and added community mysql docker image in docker-compose.yaml
-NOTE :- I have also created a private artifact repository in task 4 , but for this project and to make the image available for review I have used public DockerHub 
+Used docker to containerize the Application that was created in task 1 and pushed to public dockerHub, and added community mysql docker image in docker-compose.yaml
+NOTE :- I have also created a private artifact repository in task 4 , but for this task and to make the image available for review I have used public DockerHub , In the CICD pipeline i have used Private artifact repository .
 
 ### Pre-requisites
 - Docker
 
 ### Steps to produce
-- cd task-1&2
+- cd task-1&2&4
 - docker build -t image-name:image-tag .
 - docker push image-name:image-tag
 - docker-compose up
@@ -44,7 +91,6 @@ NOTE :- I have also created a private artifact repository in task 4 , but for th
     - 3 Subnets
     - GKE with 3 nodes 1 in each Availability zone to maintain high availability
     - Artifact registry to store our dockerized images ( private )
-    - A Load balancer for my service
     - 1 Firewall for lb
     - Target Group for lb
     - Forwarding Rule for lb
@@ -52,6 +98,8 @@ NOTE :- I have also created a private artifact repository in task 4 , but for th
     - Network Endpoint for the service
     - Network Endpoint Group for Service
     - A managed MYSQL database
+
+NOTE :- A load Balancer was not created using Terraform , but provisioned via manifest files in K8 and attached to our service which helps in auto matically creating auto-scaling groups for any service which gets attached to it
 
 - To maintain high availability I have gone with kubernetes , while the other options like cloud run , or docker swarm were available , kubernetes allowed me to better orchestrate my application and also to deploy the monitoring ( task 7 ) and logging stack ( task 8 ) , I can reuse kubernetes to deploy them instead of provisioning new infra .
  
@@ -117,10 +165,12 @@ NOTE :- I have also created a private artifact repository in task 4 , but for th
                 --role=roles/artifactregistry.reader
 
     - Once all the permissions are in place we will create the pipeline
-        - The pipeline structure looks like 
+        - The pipeline structure looks like
+        ![JOBS](screenshots/jobs.png)
             - JOB 1 ( Code Quality Check ) :- 
                 - Code Checkout
                 - Code Analysis
+            ![JOBS](screenshots/analysis.png)
             - JOB 2 ( Build and push to Registry) :- 
                 - Code Checkout
                 - Unit test 
@@ -129,13 +179,24 @@ NOTE :- I have also created a private artifact repository in task 4 , but for th
                 - Create image tag
                 - Build Docker Image
                 - Push Docker Image
+            ![JOBS](screenshots/build.png)
             - JOB 3 ( Deploy to K8s ) :- 
                 - Obtain access token to GCP
                 - Get Authenticated with Artifact Registry\
                 - Get Authenticated with GKE
                 - Update the image tag value with latest docker image tag
                 - Apply the manifest file
+            ![JOBS](screenshots/deploy.png)
+        
 
+   
+## Task 6 Security Best Practices 
+### Description
+- I have not used any ec2 instance hence no SSH key was used 
+- Similarly no need to whitelist any IPS
+- Used environment variables in terraform ( locals.tf ) and github actions pipelines ( secrets )
+- For containers I have gone multi-stage build with Distroless Images by Google , they only have the binaries required to run the service , and not a single extra package is installed in the image making it the base image with highest security .
+- Even to authenticate github action and GCP I have used OIDC connect instead of storing any passwords 
 
 ## Task 7 Monitoring and Alerts 
 ### Description
@@ -233,3 +294,5 @@ This setup could not be completed due to elasticsearch pods having excessive mem
 - By Deafult GCP monitoring allows to explore and filter logs based on namespace , pod name , cluster , node and errors
 
 ![GCP-LOGS](screenshots/GCP-logs.png)
+
+
