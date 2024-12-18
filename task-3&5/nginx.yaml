@@ -300,6 +300,16 @@ data:
   allow-snippet-annotations: "true"
 kind: ConfigMap
 metadata:
+  annotations:
+    meta.helm.sh/release-name: nginx
+    meta.helm.sh/release-namespace: ingress
+    oci.oraclecloud.com/load-balancer-type: lb
+    oci.oraclecloud.com/oci-network-security-groups: ocid1.networksecuritygroup.oc1.ap-mumbai-1.aaaaaaaaozqnw6xkoyjrxwfdnwcpqj4lbboiwtyjvbpsknniuu4ps6raedgq
+    service.beta.kubernetes.io/oci-load-balancer-internal: "true"
+    service.beta.kubernetes.io/oci-load-balancer-shape: flexible
+    service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: "100"
+    service.beta.kubernetes.io/oci-load-balancer-shape-flex-min: "10"
+    service.beta.kubernetes.io/oci-load-balancer-subnet1: ocid1.subnet.oc1.ap-mumbai-1.aaaaaaaatri6igynks33cjs4dxs6grdnpotggbep7quqj5eqduvqsf3snkgq
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/instance: ingress-nginx
@@ -332,7 +342,7 @@ spec:
     name: https
     port: 443
     protocol: TCP
-    targetPort: https
+    targetPort: 80
   selector:
     app.kubernetes.io/component: controller
     app.kubernetes.io/instance: ingress-nginx
